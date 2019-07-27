@@ -1,0 +1,169 @@
+{#
+
+electrothemenewproducts.php
+
+Template file for admin panel.
+
+#}
+{{ header }}{{ column_left }}
+
+<!-- content -->
+<div id="content">
+	<!-- page-header -->
+	<div class="page-header">
+		<!-- container-fluid -->
+		<div class="container-fluid">
+			<!-- pull-right -->
+			<div class="pull-right">
+				<button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i
+					 class="fa fa-save"></i></button>
+				<a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+			</div>
+			<!-- /pull-right -->
+			<h1>{{ heading_title }}</h1>
+			<!-- breadcrumb -->
+			<ul class="breadcrumb">
+				{% for breadcrumb in breadcrumbs %}
+				<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+				{% endfor %}
+			</ul>
+			<!-- /breadcrumb -->
+		</div>
+		<!-- /container-fluid -->
+	</div>
+	<!-- /page-header -->
+	<!-- container-fluid -->
+	<div class="container-fluid">
+		{% if error_warning %}
+		<!-- alert-danger -->
+		<div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}
+			<button type="button" class="close" data-dismiss="alert">&times;</button>
+		</div>
+		<!-- /alert-danger -->
+		{% endif %}
+		<!-- panel -->
+		<div class="panel panel-default">
+			<!-- panel-heading -->
+			<div class="panel-heading">
+				<h3 class="panel-title"><i class="fa fa-pencil"></i> {{ text_edit }}</h3>
+			</div>
+			<!-- /panel-heading -->
+			<!-- panel-body -->
+			<div class="panel-body">
+				<!-- form -->
+				<form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+					<!-- Control elements will be here. -->
+
+					<!-- Name -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-name">{{ entry_name }}</label>
+						<div class="col-sm-10">
+							<input type="text" name="name" value="{{ name }}" id="input-name" class="form-control" />
+							{% if error_name %}
+							<div class="text-danger">{{ error_name }}</div>
+							{% endif %}
+						</div>
+					</div>
+					<!-- /Name -->
+					
+					<!-- /Pick type of filter -->
+					<div class="form-group" id="filter">
+						<label class="col-sm-2 control-label" data-toggle="tooltip" title="{{ text_type_new_products_tooltip }}">{{ text_type_new_products }}</label>
+						<div class="col-sm-10">
+							<label data-toggle="tooltip" title="{{ text_filter_by_date_tooltip }}">
+								<input type="radio" name="type" value="date" {% if type=='date' %}checked{% endif %} >
+								{{ text_filter_by_date }}
+							</label>
+							<label data-toggle="tooltip" title="{{ text_filter_by_period_tooltip }}">
+								<input type="radio" name="type" value="period" {% if type=='period' %}checked{% endif %}>
+								{{ text_filter_by_period }}
+							</label>
+							<input type="hidden" id="selected_type" value="{{ type }}"/>
+						</div>
+					</div>
+					<!-- /Pick type of filter -->
+
+					<!-- New products date -->
+					<div class="form-group " id="date">
+						<label class="col-sm-2 control-label" for="dnp" data-toggle="tooltip" title="{{ text_date_new_products_tooltip }}">{{ text_date_new_products }}</label>
+						<div class="col-sm-10">
+							<input type="date" name="dnp" {% if date_new_products %} value="{{ date_new_products }}"{% endif %} class="form-control" />
+						</div>
+					</div>
+					<!-- /New products date -->
+
+					<!-- Pick a period -->
+					<div class="form-group" id="period">
+						<label class="col-sm-2 control-label" data-toggle="tooltip" title="{{ text_pick_a_period_new_products_tooltip }}">{{ text_pick_a_period_new_products }}</label>
+						<div class="col-sm-10">
+							<label class="col-sm-1">
+								<input type="radio" name="period" value="month" class="form-control" {% if period == 'month' %}checked{% endif %}/>{{ text_month }}
+							</label>
+							<label class="col-sm-1">
+								<input type="radio" name="period" value="week" class="form-control" {% if period == 'week' %}checked{% endif %}/>{{ text_week }}
+							</label>
+							<label class="col-sm-1">
+								<input type="radio" name="period" value="day" class="form-control"{% if period == 'day' %}checked{% endif %}/>{{ text_day }}
+							</label>
+							<label class="col-sm-1">
+								<input type="radio" name="period" value="hour" class="form-control"{% if period == 'hour' %}checked{% endif %}/>{{ text_hour }}
+							</label>
+						</div>
+					</div>
+					<!-- /Pick a period -->
+
+					<!-- Status -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+						<div class="col-sm-10">
+							<select name="status" id="input-status" class="form-control">
+								{% if status %}
+								<option value="1" selected="selected">{{ text_enabled }}</option>
+								<option value="0">{{ text_disabled }}</option>
+								{% else %}
+								<option value="1">{{ text_enabled }}</option>
+								<option value="0" selected="selected">{{ text_disabled }}</option>
+								{% endif %}
+							</select>
+						</div>
+					</div>
+					<!-- /Status -->
+				</form>
+				<!-- /form -->
+			</div>
+			<!-- /panel-body -->
+		</div>
+		<!-- /panel -->
+	</div>
+	<!-- /container-fluid -->
+</div>
+<!-- /content -->
+<script>
+	$(document).ready(function(){
+		var filter=$('#filter');
+		var period=$('#period');
+		var date=$('#date');
+
+
+		var type="{{ type }}";
+		
+		if (type == 'date'){
+			$(date).show();
+			$(period).hide();
+		} else if (type=='period'){
+			$(date).hide();
+			$(period).show();
+		}
+		$("input[value=\'date\']").on('click',function(event){
+			$(period).hide();
+			$(date).show();
+		});
+		$("input[value=\'period\']").on('click',function(event){
+			$(date).hide();
+			$(period).show();
+		});
+
+	});
+	
+</script>
+{{ footer }}

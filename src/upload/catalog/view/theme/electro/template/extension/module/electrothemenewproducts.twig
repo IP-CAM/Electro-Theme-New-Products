@@ -1,0 +1,336 @@
+{#
+
+electrothemenewproducts.php
+
+Template file for front page.
+
+#}
+{% if products|length > 0 %}
+<!-- SECTION -->
+<div class="section electro-new-products">
+  <!-- container -->
+  <div class="container">
+    <!-- row -->
+    <div class="row">
+      <div class="col-md-12">
+        <!-- section title -->
+        <div class="section-title">
+          <h3 class="title">{{ text_new_products }}</h3>
+          <!-- section-nav -->
+          <div class="section-nav">
+            <!-- section-tab-nav -->
+            <ul class="section-tab-nav tab-nav">
+              <li class="active">
+                <a data-toggle="tab" href="#tab1" data-category-id="-1">{{ text_all }}</a>
+              </li>
+              {% for category in categories %}
+              <li>
+                <a data-toggle="tab" href="#tab1" data-category-id="{{ category.id }}">{{ category.name }}</a>
+              </li>
+              {% endfor %}
+            </ul>
+            <!-- /section-tab-nav -->
+          </div>
+          <!-- /section-nav -->
+        </div>
+        <!-- /section title -->
+      </div>
+
+      <!-- Products tab & slick -->
+      <div class="col-md-12">
+        <!-- row -->
+        <div class="row">
+          <!-- products-tabs -->
+          <div class="products-tabs">
+            <!-- tab -->
+            <div id="tab1" class="tab-pane active">
+              <!-- hidden products list -->
+              <div id="products-hide" style="display:none">
+                {% for product in products %}
+                <!-- product -->
+                <div class="product category-{{  product.categories[0]['category_id']  }}" data-id="{{  product.categories[0]['category_id']  }}">
+                  <!-- product-img -->
+                  <div class="product-img">
+                    {% if product.image %}
+                    <img src="/image/{{ product.image }}" alt="{{ product.name }}">
+                    {% else %}
+                    <img src="/image/placeholder.png" alt="{{ product.name }}">
+                    {% endif %}
+                    <div class="product-label">
+                    </div>
+                  </div>
+                  <!-- /product-img -->
+                  <!-- product-body -->
+                  <div class="product-body">
+                    <!-- product-name -->
+                    <h3 class="product-name">
+                      <a href="/index.php?route=product/product&product_id={{ product.product_id }}">{{ product.name
+                        }}</a>
+                    </h3>
+                    <!-- /product-name -->
+
+                    {% if product.price or product.price == 0%}
+                    <!-- product-price -->
+                      {% if not product.special %}
+                    <h4 class="product-price">
+                      
+                        {{ product.price }}
+
+                    </h4>
+                      {% else %}
+                    <h4 class="product-price">
+
+                          
+                          {{ product.special }}
+
+                       <del class="product-old-price">
+
+                          {{ product.price }}
+
+                       </del>
+                    </h4>
+                      {% endif %}
+                    <!-- /product-price -->
+                    {% endif %}
+
+
+                    {% if product.rating %}
+                    <!-- product-rating -->
+                    <div class="product-rating">
+                      {% for i in 1..5 %}
+                      {% if product.rating>i %}
+                      <i class="fa fa-star"></i>
+                      {% else %}
+                      <i class="fa fa-star-o"></i>
+                      {% endif %}
+                      {% endfor %}
+                    </div>
+                    <!-- /product-rating -->
+                    {% else %}
+                    <!-- product-rating -->
+                    <div class="product-rating">
+                      {% for i in 1..5 %}
+                      <i class="fa fa-star-o"></i>
+                      {% endfor %}
+                    </div>
+                    <!-- /product-rating -->
+                    {% endif %}
+
+                    <!-- product-buttons -->
+                    <div class="product-btns">
+                      <input type='hidden' value='{{ product.product_id }}' class='product-id' />
+                      <button class="add-to-wishlist" onclick="wishlist.add('{{ product.product_id }}')">
+                        <i class="fa fa-heart-o"></i>
+                        <span class="tooltipp">{{ button_wishlist }}</span>
+                      </button>
+                      <button class="add-to-compare" onclick="compare.add('{{ product.product_id }}')">
+                        <i class="fa fa-exchange"></i>
+                        <span class="tooltipp">{{ button_compare }}</span>
+                      </button>
+                    </div>
+                    <!-- /product-buttons -->
+
+                  </div>
+                  <!-- /product-body -->
+                  <input type='hidden' value='1' class='input-quantity' />
+                  <!-- add-to-cart -->
+                  <div class="add-to-cart">
+                    <button class="add-to-cart-btn" type="button" data-product-id="{{ product.product_id }}">
+                      <i class="fa fa-shopping-cart"></i>
+                      {{ button_cart }}
+                    </button>
+                  </div>
+                  <!-- /add-to-cart -->
+
+                  <div class="clearfix visible-sm visible-xs"></div>
+                </div>
+                <!-- /product -->
+                {% endfor %}
+              </div>
+              <!-- / hidden products list -->
+              <!-- products list -->
+              <div class="products-slick" data-nav="#slick-nav-1">
+              </div>
+              <!-- /products list -->
+              <div id="slick-nav-1" class="products-slick-nav"></div>
+            </div>
+            <!-- /tab -->
+          </div>
+          <!-- /products-tabs -->
+        </div>
+        <!-- /row -->
+      </div>
+      <!-- /Products tab & slick -->
+    </div>
+    <!-- /row -->
+  </div>
+  <!-- /container -->
+</div>
+<!-- /SECTION -->
+<script>
+  $(document).ready(function () {
+    var root = $(".electro-new-products #products-hide");
+    var target = $(".electro-new-products .products-slick");
+    var products = $(root).children();
+    for (var i = 0, len = products.length; i < len; i++) {
+      var product = products[i];
+      $(product).clone().appendTo(target); // show all of the new products
+    }
+
+    function reloadCarousel() {
+      var $nav = $(".electro-new-products .products-slick").attr('data-nav');
+      $(".electro-new-products .products-slick").slick({
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        autoplay: true,
+        infinite: true,
+        speed: 300,
+        dots: false,
+        arrows: true,
+        appendArrows: $nav ? $nav : false,
+        responsive: [{
+            breakpoint: 991,
+            settings: {
+              slidesToShow: 2,
+              slidesToScroll: 1,
+            }
+          },
+          {
+            breakpoint: 480,
+            settings: {
+              slidesToShow: 1,
+              slidesToScroll: 1,
+            }
+          },
+        ]
+      });
+
+    }
+    reloadCarousel();
+    $('.electro-new-products .add-to-cart-btn').on('click', addToCartFnNewProducts);
+    // Categories
+    $(".electro-new-products .tab-nav a").on('click', function (event) {
+      var thisElement = $(event.target);
+      var categoryId = $(thisElement).data("category-id");
+      showCategories(categoryId);
+    });
+
+    function showCategories(id) {
+      var root = $(".electro-new-products #products-hide");
+      var target = $(".electro-new-products .products-slick");
+      $(target).slick("unslick");
+      $(target).children().remove();
+      var products = $(root).children();
+      if (id == -1) { // if clicked on 'All' (categories)
+        for (var i = 0, len = products.length; i < len; i++) {
+          var product = products[i];
+           // show all of the new products
+          var clone=$(product).clone();
+          clone.appendTo(target);
+          $(clone).children('.add-to-cart').children('.add-to-cart-btn').on('click', addToCartFnNewProducts);
+        }
+      } else {
+        for (var i = 0, len = products.length; i < len; i++) {
+          // gets product's category's id
+          var product = products[i];
+          cid = $(product).data("id");
+          if (cid == id) {
+            // clones the product's node to .products-slick
+            var clone=$(product).clone();
+            clone.appendTo(target);
+            $(clone).children('.add-to-cart').children('.add-to-cart-btn').on('click', addToCartFnNewProducts);
+            
+          }
+        }
+      }
+      // creates a new carousel
+      reloadCarousel();
+    }
+    var addToCartFnNewProducts = function(event) {
+        var id = $(event.target).data('product-id');
+        var quantity = 1;
+        
+        var target = event.target;
+        
+        var data = 'product_id=' + id + '&quantity=' + quantity;        
+
+        $.ajax({
+            url: 'index.php?route=checkout/cart/add',
+            type: 'post',
+            data: data,
+            dataType: 'json',
+            beforeSend: function() {},
+            complete: function() {},
+            success: function(json) {
+                $('.alert-dismissible, .text-danger').remove();
+                $('.form-group').removeClass('has-error');
+
+                if (json['error']) {
+                    if (json['error']['option']) {
+                        for (i in json['error']['option']) {
+                            var element = $('#input-option' + i.replace('_', '-'));
+
+                            if (element.parent().hasClass('input-group')) {
+                                element.parent().after('<div class="text-danger">' + json['error']['option'][i] + '</div>');
+                            } else {
+                                element.after('<div class="text-danger">' + json['error']['option'][i] + '</div>');
+                            }
+                        }
+                    }
+
+                    if (json['error']['recurring']) {
+                        $('select[name=\'recurring_id\']').after('<div class="text-danger">' + json['error']['recurring'] + '</div>');
+                    }
+
+                    // Highlight any found errors
+                    $('.text-danger').parent().addClass('has-error');
+                }
+
+                if (json['redirect']) {
+                    location = json['redirect'];
+                }
+
+                if (json['success']) {
+
+                    $('#content')
+                        //.parent()
+                        .before('<div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+
+                    // Need to set timeout otherwise it wont update the total
+                    setTimeout(function() {
+                        $('#cart > button').html('<span id="cart-total"><i class="fa fa-shopping-cart"></i> ' + json['total'] + '</span>');
+                    }, 100);
+                    $('#cart-dropdown .qty').text(/([0-9]{1,})/.exec(json['total'])[0]);
+                    $('html, body').animate({
+                        scrollTop: 0
+                    }, 'slow');
+
+                    updateCartImages();
+                } else {
+                    $('#content')
+                        //.parent()
+                        .before('<div class="alert alert-danger alert-dismissible"><i class="fa fa-check-circle"></i> Oops! Something is wrong. Maybe you have not set some options... Please, ensure that you have set all the required options on the page.<button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+
+                }
+                if (!json) {
+                    $('#content')
+                        //.parent()
+                        .before('<div class="alert alert-danger alert-dismissible"><i class="fa fa-check-circle"></i> No JSON <button type="button" class="close" data-dismiss="alert">&times;</button></div>');
+                }
+                return false;
+            },
+            error: function(xhr, ajaxOptions, thrownError) {
+                alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+            }
+        });
+        return false;
+    };
+    
+  });
+</script>
+{% else %}
+<script>
+console.log("There is no products for New Products Module.");
+</script>
+{% endif %}
